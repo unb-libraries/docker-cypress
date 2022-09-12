@@ -1,0 +1,7 @@
+{
+  "name": "@unb-libraries/cypress",
+  "version": "1.0.0",
+  "dependencies": {
+    "glob": "^8.0.3"
+  }
+}

@@ -3,6 +3,8 @@ FROM cypress/included:10.3.0
 WORKDIR /cypress
 COPY ./cypress .
 
+RUN npm install
+
 LABEL ca.unb.lib.generator="cypress" \
   org.label-schema.build-date=$BUILD_DATE \
   org.label-schema.description="docker-cypress is the base cypress image at UNB Libraries." \

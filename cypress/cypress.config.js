@@ -8,7 +8,7 @@ const config = defineConfig({
     reporter: "spec",
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
-    supportFile: "support.js",
+    supportFile: "support/index.js",
     video: false
   }
 })
