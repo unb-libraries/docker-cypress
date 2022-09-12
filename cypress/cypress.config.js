@@ -3,6 +3,14 @@ const { defineConfig } = require('cypress')
 const env = process.env
 const config = defineConfig({
   e2e: {
+    setupNodeEvents(on, config) {
+      const glob = require("glob")
+      glob(`${require.main.path}/plugins/**/cypress.plugin.js`, {}, (err, plugins) => {
+        if (!err) {
+          config.plugins = plugins
+        }
+      })
+    },
     experimentalSessionAndOrigin: true,
     fixturesFolder: "fixtures",
     reporter: "spec",
