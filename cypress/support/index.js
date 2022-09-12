@@ -7,12 +7,10 @@ glob(`${require.main.path}/**/support.js`, {}, (err, files) => {
       plugin.commands.forEach(cmd => {
         switch(cmd.method) {
           case "overwrite":
-            // Cypress.Commands.overwrite(cmd.name, cmd.fn); break
-            console.log(cmd)
+            Cypress.Commands.overwrite(cmd.name, cmd.fn); break
           case "create":
           default:
-            // Cypress.Commands.add(cmd.name, cmd.options || {prevSubject: false}, cmd.fn)
-            console.log(cmd)
+            Cypress.Commands.add(cmd.name, cmd.options || {prevSubject: false}, cmd.fn)
         }
       })
     })
