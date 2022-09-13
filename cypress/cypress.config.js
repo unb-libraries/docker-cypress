@@ -8,6 +8,10 @@ const config = defineConfig({
       glob(`${require.main.path}/plugins/**/*.plugin.js`, {}, (err, plugins) => {
         if (!err && plugins) {
           config.plugins = plugins
+          on('task', plugins.reduce((all, plugin) => {
+            const { tasks } = require(plugin)
+            return tasks ? {...all, ...tasks} : all
+          }, {}))
         }
       })
       return config
