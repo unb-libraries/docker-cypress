@@ -18,6 +18,7 @@ const config = defineConfig({
     plugins: [],
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
+    supportFile: "support.js",
     video: false
   }
 })
