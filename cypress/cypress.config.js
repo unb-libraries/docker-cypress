@@ -5,7 +5,7 @@ const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       const glob = require("glob")
-      glob(`${require.main.path}/plugins/**/cypress.plugin.js`, {}, (err, plugins) => {
+      glob(`${require.main.path}/plugins/**/*.plugin.js`, {}, (err, plugins) => {
         if (!err && plugins) {
           config.plugins = plugins
         }
@@ -18,7 +18,6 @@ const config = defineConfig({
     plugins: [],
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
-    supportFile: "support/index.js",
     video: false
   }
 })
