@@ -5,9 +5,9 @@ const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      const plugins = glob.sync('plugins/**/*.plugin.js', {absolute: true})
+      const plugins = glob.sync('plugins/**/*.plugin.js')
       on('task', plugins.reduce((all, plugin) => {
-        const { tasks } = require(plugin)
+        const { tasks } = require(`./${plugin}`)
         return tasks ? {...all, ...tasks} : all
       }, {}))
       config.plugins = plugins
