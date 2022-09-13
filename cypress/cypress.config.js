@@ -1,19 +1,16 @@
 const { defineConfig } = require('cypress')
+const glob = require('glob')
 
 const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      const glob = require("glob")
-      glob(`${require.main.path}/plugins/**/*.plugin.js`, {}, (err, plugins) => {
-        if (!err && plugins) {
-          config.plugins = plugins
-          on('task', plugins.reduce((all, plugin) => {
-            const { tasks } = require(plugin)
-            return tasks ? {...all, ...tasks} : all
-          }, {}))
-        }
-      })
+      const plugins = glob.sync('plugins/**/*.plugin.js', {absolute: true})
+      on('task', plugins.reduce((all, plugin) => {
+        const { tasks } = require(plugin)
+        return tasks ? {...all, ...tasks} : all
+      }, {}))
+      config.plugins = plugins
       return config
     },
     experimentalSessionAndOrigin: true,
