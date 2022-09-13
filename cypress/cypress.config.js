@@ -6,14 +6,16 @@ const config = defineConfig({
     setupNodeEvents(on, config) {
       const glob = require("glob")
       glob(`${require.main.path}/plugins/**/cypress.plugin.js`, {}, (err, plugins) => {
-        if (!err) {
+        if (!err && plugins) {
           config.plugins = plugins
         }
       })
+      return config
     },
     experimentalSessionAndOrigin: true,
     fixturesFolder: "fixtures",
     reporter: "spec",
+    plugins: [],
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
     supportFile: "support/index.js",
