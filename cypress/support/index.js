@@ -1,5 +1,5 @@
 Cypress.config().plugins.forEach(name => {
-  const plugin = require(name)
+  const plugin = require(`./${name}`)
   plugin.commands.forEach(cmd => {
     switch(cmd.method) {
       case "overwrite":

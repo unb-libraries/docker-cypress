@@ -5,9 +5,10 @@ const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      const plugins = glob.sync('plugins/**/*.plugin.js')
+      const cwd = '/cypress/support'
+      const plugins = glob.sync('plugins/**/*.plugin.js', {cwd: cwd})
       on('task', plugins.reduce((all, plugin) => {
-        const { tasks } = require(`./${plugin}`)
+        const { tasks } = require(`${cwd}/${plugin}`)
         return tasks ? {...all, ...tasks} : all
       }, {}))
       config.plugins = plugins
@@ -19,7 +20,7 @@ const config = defineConfig({
     plugins: [],
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
-    supportFile: "support.js",
+    supportFile: "support/index.js",
     video: false
   }
 })
