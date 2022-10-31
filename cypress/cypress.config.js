@@ -1,23 +1,29 @@
 const { defineConfig } = require('cypress')
-const glob = require('glob')
 
 const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      const cwd = '/cypress/support'
-      const plugins = glob.sync('plugins/**/*.plugin.js', {cwd: cwd})
+      const pluginDir = 'support/plugins'
+      const plugins = glob.sync('contrib/*.js', {
+        cwd: pluginDir
+      }).map(filename => filename.split('.')[0])
+
       on('task', plugins.reduce((all, plugin) => {
-        const { tasks } = require(`${cwd}/${plugin}`)
+        const { tasks } = require(`./${pluginDir}/${plugin}`)
         return tasks ? {...all, ...tasks} : all
       }, {}))
-      config.plugins = plugins
+      
+      config.plugins = {
+        ...Object.fromEntries(plugins.map(plugin => [plugin, {}])),
+        custom: {},
+      }
+      
       return config
     },
     experimentalSessionAndOrigin: true,
     fixturesFolder: "fixtures",
     reporter: "spec",
-    plugins: [],
     specPattern: 'e2e/**/*.cy.js',
     screenshotOnRunFailure: false,
     supportFile: "support/index.js",

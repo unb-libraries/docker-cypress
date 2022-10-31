@@ -1,12 +1,17 @@
-Cypress.config().plugins.forEach(name => {
-  const plugin = require(`./${name}`)
-  plugin.commands.forEach(cmd => {
-    switch(cmd.method) {
-      case "overwrite":
-        Cypress.Commands.overwrite(cmd.name, cmd.fn); break
-      case "create":
-      default:
-        Cypress.Commands.add(cmd.name, cmd.options || {prevSubject: false}, cmd.fn)
-    }
-  })
+Object.entries(Cypress.config().plugins).forEach(([name, options]) => {
+  const { commands } = require(`./plugins/${name}`)
+
+  Object.entries(commands)
+    .forEach(([name, { fn, method = 'add', type = 'parent', subject = false }]) => {
+      if (method === 'add') {
+        Cypress.Commands.add(name, {
+          prevSubject: type === 'parent'
+            ? false
+            : subject,
+        }, fn)
+      }
+      else {
+        Cypress.Commands.overwrite(name, fn)
+      }
+    })
 })
