@@ -1,5 +1,5 @@
-Object.entries(Cypress.config().plugins).forEach(([name, options]) => {
-  const { commands } = require(`./plugins/${name}`)
+Object.values(Cypress.config().plugins).forEach(plugin => {
+  const { commands } = require(`./plugins/${plugin.relativePath}`)
 
   Object.entries(commands)
     .forEach(([name, { fn, method = 'add', type = 'parent', subject = false }]) => {

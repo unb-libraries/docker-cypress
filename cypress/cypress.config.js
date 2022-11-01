@@ -1,25 +1,47 @@
 const { defineConfig } = require('cypress')
+const glob = require('glob')
+const cypressDir = process.cwd()
+
+function findPlugins(pluginsFolder) {
+  const plugins = glob.sync('*.js', {
+    cwd: `${pluginsFolder}/contrib`
+  }).map(filename => {
+    const name = filename.split('.')[0]
+    return [name, {
+      name,
+      path: `${cypressDir}/${pluginsFolder}/contrib/${filename}`,
+      relativePath: `contrib/${filename}`,
+    }]
+  })
+
+  return {
+    ...Object.fromEntries(plugins),
+    custom: {
+      name: "custom",
+      path: `${cypressDir}/${pluginsFolder}/custom/index.js`,
+      relativePath: `custom/index.js`,
+    },
+  }
+}
+
+function findPluginTasks(plugins) {
+  return Object.values(plugins).reduce((tasks, plugin) => {
+    const { tasks: pluginTasks } = require(plugin.path)
+    return pluginTasks
+      ? {...tasks, ...pluginTasks}
+      : tasks
+  }, {})
+}
 
 const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      const glob = require('glob')
-      
-      const pluginDir = 'support/plugins'
-      const plugins = glob.sync('contrib/*.js', {
-        cwd: pluginDir
-      }).map(filename => filename.split('.')[0])
+      config.pluginsFolder = 'support/plugins'
+      config.plugins = findPlugins(config.pluginsFolder)
 
-      on('task', plugins.reduce((all, plugin) => {
-        const { tasks } = require(`./${pluginDir}/${plugin}`)
-        return tasks ? {...all, ...tasks} : all
-      }, {}))
-      
-      config.plugins = {
-        ...Object.fromEntries(plugins.map(plugin => [plugin, {}])),
-        custom: {},
-      }
+      const tasks = findPluginTasks(config.plugins)
+      on('task', tasks)
       
       return config
     },
