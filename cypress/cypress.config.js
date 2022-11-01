@@ -4,6 +4,8 @@ const env = process.env
 const config = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
+      const glob = require('glob')
+      
       const pluginDir = 'support/plugins'
       const plugins = glob.sync('contrib/*.js', {
         cwd: pluginDir
