@@ -53,7 +53,9 @@ const config = defineConfig({
       config.plugins = findPlugins(config.pluginsFolder)
 
       const tasks = findPluginTasks(config.plugins)
-      on('task', tasks)
+      if (tasks) {
+        on('task', tasks)
+      }
 
       const preprocessors = findPluginPreprocessors(config.plugins)
       if (Object.values(preprocessors).length > 0) {
