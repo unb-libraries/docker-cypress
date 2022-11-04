@@ -1,6 +1,9 @@
 const { defineConfig } = require('cypress')
 const glob = require('glob')
+const fs = require('fs')
+const path = require('path')
 const cypressDir = process.cwd()
+const bundler = require('@cypress/webpack-preprocessor')
 
 function findPlugins(pluginsFolder) {
   const plugins = glob.sync('*.js', {
@@ -33,6 +36,15 @@ function findPluginTasks(plugins) {
   }, {})
 }
 
+function findPluginPreprocessors(plugins) {
+  return Object.values(plugins).reduce((pps, plugin) => {
+    const { preprocessors: pluginPps } = require(plugin.path)
+    return pluginPps
+      ? {...pps, ...pluginPps}
+      : pps
+  }, {})
+}
+
 const env = process.env
 const config = defineConfig({
   e2e: {
@@ -42,6 +54,32 @@ const config = defineConfig({
 
       const tasks = findPluginTasks(config.plugins)
       on('task', tasks)
+
+      const preprocessors = findPluginPreprocessors(config.plugins)
+      if (Object.values(preprocessors).length > 0) {
+        on('file:preprocessor', (file) => {
+          let { filePath } = file
+
+          if (!filePath.match(/.*\/e2e\/.*/)) {
+            return filePath
+          }
+
+          let spec = fs.readFileSync(filePath, 'utf8')
+          Object.values(preprocessors).forEach(fn => {
+            const pp = fn()
+            if (pp.applies(filePath)) {
+              spec = pp.transform(spec)
+              filePath = `/tmp/${path.basename(filePath, path.extname(filePath))}${pp.extname}`
+            }
+          })
+          fs.writeFileSync(filePath, spec)
+
+          file.filePath = filePath
+          file.shouldWatch = false
+
+          return bundler()(file)
+        })
+      }
       
       return config
     },

@@ -2,6 +2,7 @@
   "name": "@unb-libraries/cypress",
   "version": "1.0.0",
   "dependencies": {
+    "@cypress/webpack-preprocessor": "^5.15.3",
     "glob": "^8.0.3"
   }
 }
