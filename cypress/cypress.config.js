@@ -63,12 +63,11 @@ const config = defineConfig({
           let { filePath } = file
 
           if (!filePath.match(/.*\/e2e\/.*/)) {
-            return filePath
+            return bundler()(file)
           }
 
           let spec = fs.readFileSync(filePath, 'utf8')
-          Object.values(preprocessors).forEach(fn => {
-            const pp = fn()
+          Object.values(preprocessors).forEach(pp => {
             if (pp.applies(filePath)) {
               spec = pp.transform(spec)
               filePath = `/tmp/${path.basename(filePath, path.extname(filePath))}${pp.extname}`
