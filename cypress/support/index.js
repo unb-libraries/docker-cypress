@@ -22,6 +22,21 @@ Object.entries(commands)
     }
   })
 
+function Workflows() {
+  this.workflows = {}
+}
+
+Workflows.prototype.add = function (id, workflowFn) {
+  this.workflows[id] = workflowFn
+}
+
+Workflows.prototype.run = function (id, context) {
+  return this.workflows[id](context)
+}
+
+Cypress.$Cypress.prototype.Workflows = new Workflows()
+Object.entries(workflows).forEach(([id, workflowFn]) => Cypress.Workflows.add(id, workflowFn))
+
 Cypress.Commands.overwrite('get', (originalFn, selector, options) => {
   // Match shortcuts such as "widget:input:title" to get the form input element with the name "title"
   if (selector.match(/^[a-zA-Z-_]+(\:([0-9a-zA-Z-_])+)+$/)) {
