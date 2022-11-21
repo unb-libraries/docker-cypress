@@ -1,11 +1,12 @@
-const { commands, selectors } = Object
+const { commands, selectors, workflows } = Object
   .values(Cypress.config().plugins)
-  .reduce(({commands, selectors}, plugin) => {
-    const { commands: pCommands, selectors: pSelectors } = require(`./plugins/${plugin.relativePath}`)
+  .reduce(({commands, selectors, workflows}, plugin) => {
+    const { commands: pCommands, selectors: pSelectors, workflows: pWorkflows } = require(`./plugins/${plugin.relativePath}`)
     return {
       commands: { ...commands, ...pCommands },
       selectors: { ...selectors, ...pSelectors },
-    }}, {commands: {}, selectors: {}})
+      workflows: { ...workflows, ...pWorkflows },
+    }}, {commands: {}, selectors: {}, workflows: {} })
 
 Object.entries(commands)
   .forEach(([name, { fn, method = 'add', type = 'parent', subject = false }]) => {
