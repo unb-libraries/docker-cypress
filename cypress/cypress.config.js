@@ -60,25 +60,29 @@ const config = defineConfig({
       const preprocessors = findPluginPreprocessors(config.plugins)
       if (Object.values(preprocessors).length > 0) {
         on('file:preprocessor', (file) => {
-          let { filePath } = file
+          let { filePath, shouldWatch } = file
 
           if (!filePath.match(/.*\/e2e\/.*/)) {
             return bundler()(file)
           }
 
-          let spec = fs.readFileSync(filePath, 'utf8')
+          let outputPath = filePath
+          let spec = fs.readFileSync(outputPath, 'utf8')
           Object.values(preprocessors).forEach(pp => {
-            if (pp.applies(filePath)) {
+            if (pp.applies(outputPath)) {
               spec = pp.transform(spec)
-              filePath = `/tmp/${path.basename(filePath, path.extname(filePath))}${pp.extname}`
+              outputPath = `/tmp/${path.basename(outputPath, path.extname(outputPath))}${pp.extname}`
             }
           })
-          fs.writeFileSync(filePath, spec)
+          fs.writeFileSync(outputPath, spec)
 
-          file.filePath = filePath
-          file.shouldWatch = false
+          if (shouldWatch && filePath !== outputPath) {
+            fs.watch(filePath, () => {
+              file.emit('rerun')
+            })
+          }
 
-          return bundler()(file)
+          return outputPath
         })
       }
       
