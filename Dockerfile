@@ -6,11 +6,10 @@ COPY ./cypress .
 RUN npm install
 
 LABEL ca.unb.lib.generator="cypress" \
-  org.label-schema.build-date=$BUILD_DATE \
-  org.label-schema.description="docker-cypress is the base cypress image at UNB Libraries." \
-  org.label-schema.name="cypress" \
-  org.label-schema.url="https://github.com/unb-libraries/docker-cypress" \
-  org.label-schema.vcs-ref=$VCS_REF \
-  org.label-schema.vcs-url="https://github.com/unb-libraries/docker-cypress" \
-  org.label-schema.version=$VERSION \
-  org.opencontainers.image.source="https://github.com/unb-libraries/docker-cypress"
+  org.opencontainers.image.title="cypress" \
+  org.opencontainers.image.description="docker-cypress is the base cypress image at UNB Libraries." \
+  org.opencontainers.image.url="https://github.com/unb-libraries/docker-cypress" \
+  org.opencontainers.image.source="https://github.com/unb-libraries/docker-cypress" \
+  org.opencontainers.image.version="$VERSION" \
+  org.opencontainers.image.revision="$VCS_REF" \
+  org.opencontainers.image.created="$BUILD_DATE"
